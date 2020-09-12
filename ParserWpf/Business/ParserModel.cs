@@ -118,13 +118,16 @@ namespace ParserWpf.Business
 
         private void ResultPageHandle()
         {
+            var publicationYearCurrent = _publicationYearCurrent;
+            var currentKeyWordIndex = _currentKeyWordIndex;
+
             var jsr = _browser.EvaluateScriptAsync(_resultJs);
             jsr.ContinueWith(t =>
             {
                 var count = t.Result.Result.ToString();
                 if (count == "")
                     count = "0";
-                QueriesText += $"{_keyWords[_currentKeyWordIndex][0]}\t{_publicationYearCurrent}\t{count}\r\n";
+                QueriesText += $"{_keyWords[currentKeyWordIndex][0]}\t{publicationYearCurrent}\t{count}\r\n";
 
                 return 0;
             });
