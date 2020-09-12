@@ -4,18 +4,87 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
+        xmlns:converters="clr-namespace:ParserWpf.Wpf.Converters"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid ShowGridLines="True">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <TextBlock TextAlignment="Center" Grid.Row="0">0</TextBlock>
-        <ScrollViewer Grid.Row="1">
-            <TextBox Text="{Binding QueriesText}"/>
-        </ScrollViewer>
-        <wpf:ChromiumWebBrowser x:Name="Browser" Grid.Row="2" Address="google.com"/>
-    </Grid>
+    <Window.Resources>
+        <Style x:Key="ExpandAreaStyle" TargetType="{x:Type Border}">
+            <Setter Property="Margin" Value="150 0 0 0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsExpanded, ElementName=ExpandButton}" Value="False">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard Storyboard.TargetProperty="Margin">
+                                <ThicknessAnimation To="0 0 0 0" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard Storyboard.TargetProperty="Margin">
+                                <ThicknessAnimation To="150 0 0 0" Duration="0:0:0.2"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="wpf:ChromiumWebBrowser">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsScrollVisible}" Value="True">
+                    <Setter Property="Grid.Row" Value="2"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsScrollVisible}" Value="False">
+                    <Setter Property="Grid.Row" Value="0"/>
+                    <Setter Property="Grid.RowSpan" Value="3"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <converters:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Thickness x:Key="StackPanelPadding">0,10,0,0</Thickness>
+    </Window.Resources>
+    <Border Style="{DynamicResource ExpandAreaStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Vertical" Margin="-130 0 50 0">
+                    <Button Margin="{StaticResource StackPanelPadding}" Command="{Binding ChangeScrollVisibilityCommand}" >
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsScrollVisible}" Value="False">
+                                        <Setter Property="Content" Value="Показать результаты"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsScrollVisible}" Value="True">
+                                        <Setter Property="Content" Value="Скрыть результаты"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="Сохранить в файл" Margin="{StaticResource StackPanelPadding}" Command="{Binding SaveToFileCommand}"/>
+                </StackPanel>
+                <Expander x:Name="ExpandButton" Grid.Row="0" Grid.Column="0" ExpandDirection="Right"
+                          MaxHeight="29" Panel.ZIndex="2">
+                    <Expander.Header>
+                        <TextBlock x:Name="TextBlockPeople1" HorizontalAlignment="Center" />
+                    </Expander.Header>
+                </Expander>
+                <ScrollViewer x:Name="ScrollViewer" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" Height="100"
+                              Visibility="{Binding IsScrollVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Margin="30 5 5 15" ScrollChanged="ScrollViewer_ScrollChanged">
+                    <TextBox Text="{Binding QueriesText}"/>
+                </ScrollViewer>
+                <!-- Setter in style data trigger -->
+                <!-- ReSharper disable once Xaml.MissingGridIndex -->
+                <wpf:ChromiumWebBrowser x:Name="Browser" Grid.Column="0" Grid.ColumnSpan="2" Address="google.com"/>
+            </Grid>
+    </Border>
 </Window>

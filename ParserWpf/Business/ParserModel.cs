@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Windows.Forms;
 using CefSharp;
 using CefSharp.Wpf;
+using ParserWpf.Wpf.Commands;
 
 namespace ParserWpf.Business
 {
@@ -36,13 +40,20 @@ namespace ParserWpf.Business
 
             _browser = browser;
             _browser.LoadingStateChanged += Browser_LoadingStateChanged;
+
+            ChangeScrollVisibilityCommand = new CustomClickCommand { ExecuteCommandAction = (obj) => { IsScrollVisible = !IsScrollVisible; } };
+            SaveToFileCommand = new CustomClickCommand { ExecuteCommandAction = SaveResultsToFile };
         }
 
         #endregion
 
         #region Свойства
 
-        private string _queryText;
+        public CustomClickCommand ChangeScrollVisibilityCommand { get; protected set; }
+
+        public CustomClickCommand SaveToFileCommand { get; protected set; }
+
+        private string _queryText = string.Empty;
         public string QueriesText
         {
             get => _queryText;
@@ -52,6 +63,18 @@ namespace ParserWpf.Business
                 OnPropertyChanged();
             }
         }
+
+        private bool _isScrollVisible;
+        public bool IsScrollVisible
+        {
+            get => _isScrollVisible;
+            set
+            {
+                _isScrollVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        
 
         #endregion
 
@@ -70,6 +93,8 @@ namespace ParserWpf.Business
         private readonly string _searchJs;
         private readonly string _resultJs;
         private readonly string _resultBackJs;
+
+        private readonly StringBuilder _resultsInFile = new StringBuilder();
 
         #endregion
 
@@ -128,6 +153,7 @@ namespace ParserWpf.Business
                 if (count == "")
                     count = "0";
                 QueriesText += $"{_keyWords[currentKeyWordIndex][0]}\t{publicationYearCurrent}\t{count}\r\n";
+                _resultsInFile.Append($"{_keyWords[_currentKeyWordIndex][0]};{_publicationYearCurrent};{count}\r\n");
 
                 return 0;
             });
@@ -135,6 +161,20 @@ namespace ParserWpf.Business
 
             var jsrb = _browser.EvaluateScriptAsync(_resultBackJs);
             jsrb.ContinueWith(t => 0);
+        }
+
+        private void SaveResultsToFile(object obj)
+        {
+            var date = DateTime.Now.ToString(@"dd/mm/yyyy HH-mm-ss");
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                FileName = $@"ELibraryParseResults_{date}",
+                DefaultExt = @".csv",
+                Filter = @"Csv file (*.csv)|*.csv",
+                InitialDirectory = Directory.GetCurrentDirectory()
+            };
+            if (dialog.ShowDialog() == DialogResult.OK)
+                File.WriteAllText(dialog.FileName, _resultsInFile.ToString());
         }
 
         #endregion
