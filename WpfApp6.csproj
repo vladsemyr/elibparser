@@ -146,9 +146,9 @@
   <Import Project="packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets')" />
   <Import Project="packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.targets" Condition="Exists('packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y $(ProjectDir)key_words.json $(ProjectDir)$(OutDir)
-xcopy /y $(ProjectDir)search.js $(ProjectDir)$(OutDir)
-xcopy /y $(ProjectDir)result.js $(ProjectDir)$(OutDir)
-xcopy /y $(ProjectDir)result_back.js $(ProjectDir)$(OutDir)</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(ProjectDir)key_words.json" "$(ProjectDir)$(OutDir)"
+xcopy /y "$(ProjectDir)search.js" "$(ProjectDir)$(OutDir)"
+xcopy /y "$(ProjectDir)result.js" "$(ProjectDir)$(OutDir)"
+xcopy /y "$(ProjectDir)result_back.js" "$(ProjectDir)$(OutDir)"</PostBuildEvent>
   </PropertyGroup>
 </Project>
