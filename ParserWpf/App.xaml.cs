@@ -1,4 +1,4 @@
-﻿namespace WpfApp6
+﻿namespace ParserWpf
 {
     /// <summary>
     /// Логика взаимодействия для App.xaml
