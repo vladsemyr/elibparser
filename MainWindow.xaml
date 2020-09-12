@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApp6"
         xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -13,10 +12,10 @@
             <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Name="queryCount" TextAlignment="Center" Grid.Row="0">0</TextBlock>
+        <TextBlock TextAlignment="Center" Grid.Row="0">0</TextBlock>
         <ScrollViewer Grid.Row="1">
-            <TextBox Name="queries"></TextBox>
+            <TextBox Name="Queries"></TextBox>
         </ScrollViewer>
-        <wpf:ChromiumWebBrowser x:Name="browser" Grid.Row="2" Address="google.com"/>
+        <wpf:ChromiumWebBrowser x:Name="Browser" Grid.Row="2" Address="google.com"/>
     </Grid>
 </Window>

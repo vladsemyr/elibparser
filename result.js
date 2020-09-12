@@ -8,4 +8,5 @@ for (let i = 0; i < els.length; ++i) {
     }
 }
 
+// ReSharper disable once WrongExpressionStatement
 ret

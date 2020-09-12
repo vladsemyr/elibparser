@@ -1,10 +1,5 @@
-﻿using System.Windows;
-using System.Windows.Navigation;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-
-using System.Threading.Tasks;
 
 using CefSharp;
 using CefSharp.Wpf;
@@ -23,19 +18,19 @@ namespace WpfApp6
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        List<List<string>> keyWords = new List<List<string>> { };
-        WebState webState = WebState.Init;
+        private readonly List<List<string>> _keyWords;
+        private WebState _webState = WebState.Init;
 
-        int publicationYearStart = 1990;
-        int publicationYearEnd = 2020;
-        int publicationYearCurrent = 0;
-        int currentKeyWordIndex = 0;
+        private readonly int _publicationYearStart = 1990;
+        private readonly int _publicationYearEnd = 2020;
+        private int _publicationYearCurrent;
+        private int _currentKeyWordIndex;
 
-        string searchJS = "";
-        string resultJs = "";
-        string resultBackJs = "";
+        private readonly string _searchJs;
+        private readonly string _resultJs;
+        private readonly string _resultBackJs;
 
         public MainWindow()
         {
@@ -44,61 +39,61 @@ namespace WpfApp6
             // загрузка запросов из json-файла
             using (StreamReader file = new StreamReader("key_words.json"))
             {
-                keyWords = Newtonsoft.Json.JsonConvert.DeserializeObject<List<List<string>>>(file.ReadToEnd());
+                _keyWords = Newtonsoft.Json.JsonConvert.DeserializeObject<List<List<string>>>(file.ReadToEnd());
             }
 
             using (StreamReader file = new StreamReader("search.js"))
             {
-                searchJS = file.ReadToEnd();
+                _searchJs = file.ReadToEnd();
             }
 
             using (StreamReader file = new StreamReader("result.js"))
             {
-                resultJs = file.ReadToEnd();
+                _resultJs = file.ReadToEnd();
             }
 
             using (StreamReader file = new StreamReader("result_back.js"))
             {
-                resultBackJs = file.ReadToEnd();
+                _resultBackJs = file.ReadToEnd();
             }
 
             //browser.IsBrowserInitializedChanged += Browser_IsBrowserInitializedChanged;
-            browser.LoadingStateChanged += Browser_LoadingStateChanged;
+            Browser.LoadingStateChanged += Browser_LoadingStateChanged;
             
         }
 
         private void Browser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-            if (e.IsLoading == true)
+            if (e.IsLoading)
                 return;
 
-            switch (webState)
+            switch (_webState)
             {
                 case WebState.Init:
-                    webState = WebState.SearchPage;
-                    publicationYearCurrent = publicationYearStart;
-                    browser.Load("https://www.elibrary.ru/querybox.asp?scope=newquery");
+                    _webState = WebState.SearchPage;
+                    _publicationYearCurrent = _publicationYearStart;
+                    Browser.Load("https://www.elibrary.ru/querybox.asp?scope=newquery");
                     break;
 
                 case WebState.SearchPage:
-                    SearchPageHandle(browser);
-                    webState = WebState.ResultPage;
+                    SearchPageHandle(Browser);
+                    _webState = WebState.ResultPage;
                     break;
 
                 case WebState.ResultPage:
                     //System.Threading.Thread.Sleep(1000);
                     ResultPageHandle();
-                    if (publicationYearCurrent != publicationYearEnd)
-                        webState = WebState.SearchPage;
+                    if (_publicationYearCurrent != _publicationYearEnd)
+                        _webState = WebState.SearchPage;
                     else
                     {
-                        currentKeyWordIndex++;
-                        if (currentKeyWordIndex != keyWords.Count)
-                            webState = WebState.Init;
+                        _currentKeyWordIndex++;
+                        if (_currentKeyWordIndex != _keyWords.Count)
+                            _webState = WebState.Init;
                         else
-                            webState = WebState.Done;
+                            _webState = WebState.Done;
                     }
-                    publicationYearCurrent++;
+                    _publicationYearCurrent++;
                     break;
             }
         }
@@ -106,35 +101,28 @@ namespace WpfApp6
 
         void SearchPageHandle(ChromiumWebBrowser browser)
         {
-            var set_varsJS =$"let keyWord = '{keyWords[currentKeyWordIndex][0]}';\r\n";
-            set_varsJS += $"let publicationYear = '{publicationYearCurrent}';\r\n";
-            var js = browser.GetMainFrame().EvaluateScriptAsync(set_varsJS + searchJS);
-            var c = js.ContinueWith(t =>
-            {
-                return 0;
-            });
+            var setVarsJs =$"let keyWord = '{_keyWords[_currentKeyWordIndex][0]}';\r\n";
+            setVarsJs += $"let publicationYear = '{_publicationYearCurrent}';\r\n";
+            var js = browser.GetMainFrame().EvaluateScriptAsync(setVarsJs + _searchJs);
+            js.ContinueWith(t => 0);
         }
 
         void ResultPageHandle()
         {
-            var jsr = browser.EvaluateScriptAsync(resultJs);
-            var cr = jsr.ContinueWith(t =>
+            var jsr = Browser.EvaluateScriptAsync(_resultJs);
+            jsr.ContinueWith(t =>
             {
                 var count = t.Result.Result.ToString();
                 if (count == "")
                     count = "0";
-                Dispatcher.Invoke(() => { queries.Text += $"{keyWords[currentKeyWordIndex][0]}\t{publicationYearCurrent}\t{count}\r\n"; });
+                Dispatcher.Invoke(() => { Queries.Text += $"{_keyWords[_currentKeyWordIndex][0]}\t{_publicationYearCurrent}\t{count}\r\n"; });
                 
                 return 0;
             });
 
-            
 
-            var jsrb = browser.EvaluateScriptAsync(resultBackJs);
-            var crb = jsrb.ContinueWith(t =>
-            {
-                return 0;
-            });
+            var jsrb = Browser.EvaluateScriptAsync(_resultBackJs);
+            jsrb.ContinueWith(t => 0);
         }
     }
 }
