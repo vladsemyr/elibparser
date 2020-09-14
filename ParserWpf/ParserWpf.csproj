@@ -132,6 +132,7 @@
   <ItemGroup>
     <Content Include="Business\JavaScript\result.js" />
     <Content Include="Business\JavaScript\result_back.js" />
+    <Content Include="Business\JavaScript\robot.js" />
     <Content Include="Business\JavaScript\search.js" />
   </ItemGroup>
   <ItemGroup>

@@ -20,7 +20,7 @@ namespace ParserWpf.Business
             // загрузка запросов из json-файла
             using (StreamReader file = new StreamReader("key_words.json"))
             {
-                _keyWords = Newtonsoft.Json.JsonConvert.DeserializeObject<List<List<string>>>(file.ReadToEnd());
+                _keyWords = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(file.ReadToEnd());
             }
 
             using (StreamReader file = new StreamReader("search.js"))
@@ -82,7 +82,7 @@ namespace ParserWpf.Business
 
         private readonly ChromiumWebBrowser _browser;
 
-        private readonly List<List<string>> _keyWords;
+        private readonly List<string> _keyWords;
         private WebState _webState = WebState.Init;
 
         private readonly int _publicationYearStart = 1990;
@@ -135,7 +135,7 @@ namespace ParserWpf.Business
 
         private void SearchPageHandle()
         {
-            var setVarsJs = $"let keyWord = '{_keyWords[_currentKeyWordIndex][0]}';\r\n";
+            var setVarsJs = $"let keyWord = '{_keyWords[_currentKeyWordIndex]}';\r\n";
             setVarsJs += $"let publicationYear = '{_publicationYearCurrent}';\r\n";
             var js = _browser.GetMainFrame().EvaluateScriptAsync(setVarsJs + _searchJs);
             js.ContinueWith(t => 0);
@@ -152,8 +152,8 @@ namespace ParserWpf.Business
                 var count = t.Result.Result.ToString();
                 if (count == "")
                     count = "0";
-                QueriesText += $"{_keyWords[currentKeyWordIndex][0]}\t{publicationYearCurrent}\t{count}\r\n";
-                _resultsInFile.Append($"{_keyWords[_currentKeyWordIndex][0]};{_publicationYearCurrent};{count}\r\n");
+                QueriesText += $"{_keyWords[currentKeyWordIndex]}\t{publicationYearCurrent}\t{count}\r\n";
+                _resultsInFile.Append($"{_keyWords[_currentKeyWordIndex]};{_publicationYearCurrent};{count}\r\n");
 
                 return 0;
             });
