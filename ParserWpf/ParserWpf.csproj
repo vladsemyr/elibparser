@@ -93,6 +93,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Business\JavaScript\JsFile.cs" />
     <Compile Include="Business\ParserModel.cs" />
     <Compile Include="Business\WebState.cs" />
     <Compile Include="Wpf\Commands\CustomClickCommand.cs" />
@@ -161,6 +162,7 @@
 xcopy /y "$(ProjectDir)\Business\JavaScript\search.js" "$(ProjectDir)$(OutDir)"
 xcopy /y "$(ProjectDir)\Business\JavaScript\result.js" "$(ProjectDir)$(OutDir)"
 xcopy /y "$(ProjectDir)\Business\JavaScript\result_back.js" "$(ProjectDir)$(OutDir)"
+xcopy /y "$(ProjectDir)\Business\JavaScript\robot.js" "$(ProjectDir)$(OutDir)"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

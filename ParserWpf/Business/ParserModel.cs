@@ -23,19 +23,14 @@ namespace ParserWpf.Business
                 _keyWords = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(file.ReadToEnd());
             }
 
-            using (StreamReader file = new StreamReader("search.js"))
+            var jsFiles = Enum.GetValues(typeof(JsFile));
+            foreach (JsFile jsf in jsFiles)
             {
-                _searchJs = file.ReadToEnd();
-            }
-
-            using (StreamReader file = new StreamReader("result.js"))
-            {
-                _resultJs = file.ReadToEnd();
-            }
-
-            using (StreamReader file = new StreamReader("result_back.js"))
-            {
-                _resultBackJs = file.ReadToEnd();
+                using (StreamReader file = new StreamReader(JsFileToFilenameConvertor.Convert(jsf)))
+                {
+                    var script = file.ReadToEnd();
+                    _jsFiles.Add(jsf, script);
+                }
             }
 
             _browser = browser;
@@ -90,9 +85,7 @@ namespace ParserWpf.Business
         private int _publicationYearCurrent;
         private int _currentKeyWordIndex;
 
-        private readonly string _searchJs;
-        private readonly string _resultJs;
-        private readonly string _resultBackJs;
+        private readonly Dictionary<JsFile, string> _jsFiles = new Dictionary<JsFile, string>();
 
         private readonly StringBuilder _resultsInFile = new StringBuilder();
 
@@ -114,6 +107,7 @@ namespace ParserWpf.Business
                     break;
 
                 case WebState.SearchPage:
+                    RobotCheck();
                     SearchPageHandle();
                     _webState = WebState.ResultPage;
                     break;
@@ -133,11 +127,17 @@ namespace ParserWpf.Business
             }
         }
 
+        private void RobotCheck()
+        {
+            var js = _browser.GetMainFrame().EvaluateScriptAsync(_jsFiles[JsFile.Robot]);
+            js.ContinueWith(t => 0);
+        }
+
         private void SearchPageHandle()
         {
             var setVarsJs = $"let keyWord = '{_keyWords[_currentKeyWordIndex]}';\r\n";
             setVarsJs += $"let publicationYear = '{_publicationYearCurrent}';\r\n";
-            var js = _browser.GetMainFrame().EvaluateScriptAsync(setVarsJs + _searchJs);
+            var js = _browser.GetMainFrame().EvaluateScriptAsync(setVarsJs + _jsFiles[JsFile.Search]);
             js.ContinueWith(t => 0);
         }
 
@@ -146,7 +146,7 @@ namespace ParserWpf.Business
             var publicationYearCurrent = _publicationYearCurrent;
             var currentKeyWordIndex = _currentKeyWordIndex;
 
-            var jsr = _browser.EvaluateScriptAsync(_resultJs);
+            var jsr = _browser.EvaluateScriptAsync(_jsFiles[JsFile.Result]);
             jsr.ContinueWith(t =>
             {
                 var count = t.Result.Result.ToString();
@@ -159,7 +159,7 @@ namespace ParserWpf.Business
             });
 
 
-            var jsrb = _browser.EvaluateScriptAsync(_resultBackJs);
+            var jsrb = _browser.EvaluateScriptAsync(_jsFiles[JsFile.ResultBack]);
             jsrb.ContinueWith(t => 0);
         }
 
