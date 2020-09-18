@@ -94,6 +94,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Business\JavaScript\JsFile.cs" />
+    <Compile Include="Business\JavaScript\JsFilenameAttribute.cs" />
+    <Compile Include="Business\JavaScript\JsFileToFilenameConvertor.cs" />
     <Compile Include="Business\ParserModel.cs" />
     <Compile Include="Business\WebState.cs" />
     <Compile Include="Wpf\Commands\CustomClickCommand.cs" />
@@ -121,7 +123,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Business\JavaScript\key_words.json" />
+    <None Include="Business\JavaScript\Scripts\key_words.json" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -131,10 +133,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Business\JavaScript\result.js" />
-    <Content Include="Business\JavaScript\result_back.js" />
-    <Content Include="Business\JavaScript\robot.js" />
-    <Content Include="Business\JavaScript\search.js" />
+    <Content Include="Business\JavaScript\Scripts\result.js" />
+    <Content Include="Business\JavaScript\Scripts\result_back.js" />
+    <Content Include="Business\JavaScript\Scripts\robot.js" />
+    <Content Include="Business\JavaScript\Scripts\search.js" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="cef.redist.x64">
@@ -158,11 +160,11 @@
   <Import Project="packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets" Condition="Exists('packages\CefSharp.Common.84.4.10\build\CefSharp.Common.targets')" />
   <Import Project="packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.targets" Condition="Exists('packages\CefSharp.Wpf.84.4.10\build\CefSharp.Wpf.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(ProjectDir)\Business\JavaScript\key_words.json" "$(ProjectDir)$(OutDir)"
-xcopy /y "$(ProjectDir)\Business\JavaScript\search.js" "$(ProjectDir)$(OutDir)"
-xcopy /y "$(ProjectDir)\Business\JavaScript\result.js" "$(ProjectDir)$(OutDir)"
-xcopy /y "$(ProjectDir)\Business\JavaScript\result_back.js" "$(ProjectDir)$(OutDir)"
-xcopy /y "$(ProjectDir)\Business\JavaScript\robot.js" "$(ProjectDir)$(OutDir)"
+    <PostBuildEvent>xcopy /y "$(ProjectDir)\Business\JavaScript\Scripts\key_words.json" "$(ProjectDir)$(OutDir)"
+xcopy /y "$(ProjectDir)\Business\JavaScript\Scripts\search.js" "$(ProjectDir)$(OutDir)"
+xcopy /y "$(ProjectDir)\Business\JavaScript\Scripts\result.js" "$(ProjectDir)$(OutDir)"
+xcopy /y "$(ProjectDir)\Business\JavaScript\Scripts\result_back.js" "$(ProjectDir)$(OutDir)"
+xcopy /y "$(ProjectDir)\Business\JavaScript\Scripts\robot.js" "$(ProjectDir)$(OutDir)"
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using CefSharp;
 using CefSharp.Wpf;
+using ParserWpf.Business.JavaScript;
 using ParserWpf.Wpf.Commands;
 
 namespace ParserWpf.Business
@@ -44,9 +45,9 @@ namespace ParserWpf.Business
 
         #region Свойства
 
-        public CustomClickCommand ChangeScrollVisibilityCommand { get; protected set; }
+        public CustomClickCommand ChangeScrollVisibilityCommand { get; }
 
-        public CustomClickCommand SaveToFileCommand { get; protected set; }
+        public CustomClickCommand SaveToFileCommand { get; }
 
         private string _queryText = string.Empty;
         public string QueriesText
@@ -183,7 +184,7 @@ namespace ParserWpf.Business
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
