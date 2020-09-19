@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         xmlns:converters="clr-namespace:ParserWpf.Wpf.Converters"
+        xmlns:projectwpf="clr-namespace:ParserWpf.Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
@@ -29,11 +30,9 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="wpf:ChromiumWebBrowser">
+        <Style x:Key="MainContentStyle" TargetType="FrameworkElement">
+            <Setter Property="Grid.Row" Value="2"/>
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsScrollVisible}" Value="True">
-                    <Setter Property="Grid.Row" Value="2"/>
-                </DataTrigger>
                 <DataTrigger Binding="{Binding IsScrollVisible}" Value="False">
                     <Setter Property="Grid.Row" Value="0"/>
                     <Setter Property="Grid.RowSpan" Value="3"/>
@@ -41,50 +40,104 @@
             </Style.Triggers>
         </Style>
         <converters:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:BoolToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" VisibilityTrue="Collapsed" VisibilityFalse="Visible"/>
         <Thickness x:Key="StackPanelPadding">0,10,0,0</Thickness>
     </Window.Resources>
     <Border Style="{DynamicResource ExpandAreaStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Vertical" Margin="-130 0 50 0">
-                    <Button Margin="{StaticResource StackPanelPadding}" Command="{Binding ChangeScrollVisibilityCommand}" >
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsScrollVisible}" Value="False">
-                                        <Setter Property="Content" Value="Показать результаты"></Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsScrollVisible}" Value="True">
-                                        <Setter Property="Content" Value="Скрыть результаты"></Setter>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Content="Сохранить в файл" Margin="{StaticResource StackPanelPadding}" Command="{Binding SaveToFileCommand}"/>
-                </StackPanel>
-                <Expander x:Name="ExpandButton" Grid.Row="0" Grid.Column="0" ExpandDirection="Right"
-                          MaxHeight="29" Panel.ZIndex="2">
-                    <Expander.Header>
-                        <TextBlock x:Name="TextBlockPeople1" HorizontalAlignment="Center" />
-                    </Expander.Header>
-                </Expander>
-                <ScrollViewer x:Name="ScrollViewer" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" Height="100"
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Vertical" Margin="-130 0 50 0">
+                <Button Margin="{StaticResource StackPanelPadding}" Command="{Binding ChangeScrollVisibilityCommand}" >
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsScrollVisible}" Value="False">
+                                    <Setter Property="Content" Value="Показать результаты"></Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsScrollVisible}" Value="True">
+                                    <Setter Property="Content" Value="Скрыть результаты"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="Сохранить в файл" Margin="{StaticResource StackPanelPadding}" Command="{Binding SaveToFileCommand}"/>
+                <Button Margin="{StaticResource StackPanelPadding}" Command="{Binding ChangeBrowserVisibilityCommand}" >
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsBrowserVisible}" Value="False">
+                                    <Setter Property="Content" Value="Показать браузер"></Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsBrowserVisible}" Value="True">
+                                    <Setter Property="Content" Value="Скрыть браузер"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+            <Expander x:Name="ExpandButton" Grid.Row="0" Grid.Column="0" ExpandDirection="Right"
+                          MaxHeight="29" Panel.ZIndex="2" VerticalAlignment="Top" Margin="5 0 0 0">
+                <Expander.Header>
+                    <TextBlock x:Name="TextBlockPeople1" HorizontalAlignment="Center" />
+                </Expander.Header>
+            </Expander>
+            <ScrollViewer x:Name="ScrollViewer" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2" Height="100"
                               Visibility="{Binding IsScrollVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                               Margin="30 5 5 15" ScrollChanged="ScrollViewer_ScrollChanged">
-                    <TextBox Text="{Binding QueriesText}"/>
-                </ScrollViewer>
-                <!-- Setter in style data trigger -->
-                <!-- ReSharper disable once Xaml.MissingGridIndex -->
-                <wpf:ChromiumWebBrowser x:Name="Browser" Grid.Column="0" Grid.ColumnSpan="2" Address="google.com"/>
-            </Grid>
+                <TextBox Text="{Binding QueriesText}"/>
+            </ScrollViewer>
+            <wpf:ChromiumWebBrowser Style="{StaticResource MainContentStyle}" x:Name="Browser" Grid.Column="0" Grid.ColumnSpan="2" Address="google.com" 
+                                    Visibility="{Binding IsBrowserVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <Image Grid.Column="0" Grid.ColumnSpan="2" 
+                   Visibility="{Binding IsBrowserVisible, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Source="../../Properties/images/spinner.png"
+                   RenderTransformOrigin="0.5, 0.5" Panel.ZIndex="1">
+                <Image.RenderTransform>
+                    <RotateTransform/>
+                </Image.RenderTransform>
+                <Image.Style>
+                    <Style TargetType="Image">
+                        <Setter Property="Grid.Row" Value="2"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsScrollVisible}" Value="False">
+                                <Setter Property="Grid.Row" Value="0"/>
+                                <Setter Property="Grid.RowSpan" Value="3"/>
+                            </DataTrigger>
+                            <Trigger Property="Image.IsVisible" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard x:Name="SpinningAnimation">
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                    From="0"
+                                                    To="360"
+                                                    Duration="0:0:3"
+                                                    RepeatBehavior="Forever" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                            <Trigger Property="Image.IsVisible" Value="False">
+                                <Trigger.EnterActions>
+                                    <PauseStoryboard BeginStoryboardName="SpinningAnimation"/>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+            <TextBlock Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Visibility="{Binding IsBrowserVisible, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                       Text="РАБОТАЕМ" Panel.ZIndex="1" projectwpf:TextScaleBehavior.TextScaleBehavior="True" Style="{StaticResource MainContentStyle}"/>
+        </Grid>
     </Border>
 </Window>

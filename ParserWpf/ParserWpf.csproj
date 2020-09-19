@@ -66,6 +66,7 @@
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -100,6 +101,7 @@
     <Compile Include="Business\WebState.cs" />
     <Compile Include="Wpf\Commands\CustomClickCommand.cs" />
     <Compile Include="Wpf\Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Wpf\TextScaleBehavior.cs" />
     <Compile Include="Wpf\UI\ParserWindow.xaml.cs">
       <DependentUpon>ParserWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -137,6 +139,7 @@
     <Content Include="Business\JavaScript\Scripts\result_back.js" />
     <Content Include="Business\JavaScript\Scripts\robot.js" />
     <Content Include="Business\JavaScript\Scripts\search.js" />
+    <Resource Include="Properties\images\spinner.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="cef.redist.x64">

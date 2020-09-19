@@ -39,6 +39,7 @@ namespace ParserWpf.Business
 
             ChangeScrollVisibilityCommand = new CustomClickCommand { ExecuteCommandAction = (obj) => { IsScrollVisible = !IsScrollVisible; } };
             SaveToFileCommand = new CustomClickCommand { ExecuteCommandAction = SaveResultsToFile };
+            ChangeBrowserVisibilityCommand = new CustomClickCommand { ExecuteCommandAction = (obj) => { IsBrowserVisible = !IsBrowserVisible; } };
         }
 
         #endregion
@@ -48,6 +49,8 @@ namespace ParserWpf.Business
         public CustomClickCommand ChangeScrollVisibilityCommand { get; }
 
         public CustomClickCommand SaveToFileCommand { get; }
+
+        public CustomClickCommand ChangeBrowserVisibilityCommand { get; }
 
         private string _queryText = string.Empty;
         public string QueriesText
@@ -70,7 +73,17 @@ namespace ParserWpf.Business
                 OnPropertyChanged();
             }
         }
-        
+
+        private bool _isBrowserVisible;
+        public bool IsBrowserVisible
+        {
+            get => _isBrowserVisible;
+            set
+            {
+                _isBrowserVisible = value;
+                OnPropertyChanged();
+            }
+        }
 
         #endregion
 

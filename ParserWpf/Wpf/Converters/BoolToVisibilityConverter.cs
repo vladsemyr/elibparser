@@ -7,9 +7,9 @@ namespace ParserWpf.Wpf.Converters
 {
     public class BoolToVisibilityConverter : IValueConverter
     {
-        public static Visibility VisibilityTrue { get; set; } = Visibility.Visible;
+        public Visibility VisibilityTrue { get; set; } = Visibility.Visible;
 
-        public static Visibility VisibilityFalse { get; set; } = Visibility.Collapsed;
+        public Visibility VisibilityFalse { get; set; } = Visibility.Collapsed;
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
