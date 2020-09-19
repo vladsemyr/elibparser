@@ -145,9 +145,6 @@
     <PackageReference Include="cef.redist.x64">
       <Version>84.4.1</Version>
     </PackageReference>
-    <PackageReference Include="cef.redist.x86">
-      <Version>84.4.1</Version>
-    </PackageReference>
     <PackageReference Include="CefSharp.Common">
       <Version>84.4.10</Version>
     </PackageReference>
