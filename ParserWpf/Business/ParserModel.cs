@@ -167,7 +167,7 @@ namespace ParserWpf.Business
                 if (count == "")
                     count = "0";
                 QueriesText += $"{_keyWords[currentKeyWordIndex]}\t{publicationYearCurrent}\t{count}\r\n";
-                _resultsInFile.Append($"{_keyWords[_currentKeyWordIndex]};{_publicationYearCurrent};{count}\r\n");
+                _resultsInFile.Append($"{_keyWords[currentKeyWordIndex]};{publicationYearCurrent};{count}\r\n");
 
                 return 0;
             });
