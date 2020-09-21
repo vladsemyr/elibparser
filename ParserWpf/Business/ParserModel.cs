@@ -167,7 +167,11 @@ namespace ParserWpf.Business
                 if (count == "")
                     count = "0";
                 QueriesText += $"{_keyWords[currentKeyWordIndex]}\t{publicationYearCurrent}\t{count}\r\n";
-                _resultsInFile.Append($"{_keyWords[currentKeyWordIndex]};{publicationYearCurrent};{count}\r\n");
+                var resultString = $"{_keyWords[currentKeyWordIndex]};{publicationYearCurrent};{count}\r\n"
+                                    .Replace("(", "")
+                                    .Replace("|", "+")
+                                    .Replace(")", "");
+                _resultsInFile.Append(resultString);
 
                 return 0;
             });
@@ -188,7 +192,7 @@ namespace ParserWpf.Business
                 InitialDirectory = Directory.GetCurrentDirectory()
             };
             if (dialog.ShowDialog() == DialogResult.OK)
-                File.WriteAllText(dialog.FileName, _resultsInFile.ToString());
+                File.WriteAllText(dialog.FileName, _resultsInFile.ToString(), new UTF8Encoding(true) /* with BOM */);
         }
 
         #endregion
