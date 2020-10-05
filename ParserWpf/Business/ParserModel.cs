@@ -121,30 +121,54 @@ namespace ParserWpf.Business
                     break;
 
                 case WebState.SearchPage:
-                    RobotCheck();
-                    SearchPageHandle();
-                    _webState = WebState.ResultPage;
+                    {
+                        var js = _browser.GetMainFrame().EvaluateScriptAsync(_jsFiles[JsFile.Robot]);
+                        js.ContinueWith(t =>
+                        {
+                            if (!RobotCheck(t.Result))
+                            {
+                                SearchPageHandle();
+                                _webState = WebState.ResultPage;
+                            }
+                            else
+                            {
+                                IsBrowserVisible = true;
+                            }
+                        });
+                    }
                     break;
 
                 case WebState.ResultPage:
                     //System.Threading.Thread.Sleep(1000);
-                    ResultPageHandle();
-                    if (_publicationYearCurrent != _publicationYearEnd)
-                        _webState = WebState.SearchPage;
-                    else
                     {
-                        _currentKeyWordIndex++;
-                        _webState = _currentKeyWordIndex != _keyWords.Count ? WebState.Init : WebState.Done;
+                        var js = _browser.GetMainFrame().EvaluateScriptAsync(_jsFiles[JsFile.Robot]);
+                        js.ContinueWith(t =>
+                        {
+                            if (!RobotCheck(t.Result))
+                            {
+                                ResultPageHandle();
+                                if (_publicationYearCurrent != _publicationYearEnd)
+                                    _webState = WebState.SearchPage;
+                                else
+                                {
+                                    _currentKeyWordIndex++;
+                                    _webState = _currentKeyWordIndex != _keyWords.Count ? WebState.Init : WebState.Done;
+                                }
+                                _publicationYearCurrent++;
+                            }
+                            else
+                            {
+                                IsBrowserVisible = true;
+                            }
+                        });
                     }
-                    _publicationYearCurrent++;
                     break;
             }
         }
 
-        private void RobotCheck()
+        private bool RobotCheck(JavascriptResponse result)
         {
-            var js = _browser.GetMainFrame().EvaluateScriptAsync(_jsFiles[JsFile.Robot]);
-            js.ContinueWith(t => 0);
+            return result.Result as bool? == true;
         }
 
         private void SearchPageHandle()
